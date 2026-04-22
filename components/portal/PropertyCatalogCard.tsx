@@ -12,8 +12,7 @@ export function PropertyCatalogCard({
   imagePriority?: boolean;
 }) {
   const isUnavailable = property.status === "unavailable";
-  const isReserved = property.status === "reserved";
-  const isRestricted = property.status !== "available";
+  const isRestricted = isUnavailable;
 
   return (
     <article className={`surface-card flex flex-col overflow-hidden ${isRestricted ? "opacity-80" : ""}`}>
@@ -114,9 +113,7 @@ export function PropertyCatalogCard({
               <span className="text-center text-sm text-gray-500">
                 {isUnavailable
                   ? "Esta propiedad no está disponible actualmente."
-                  : isReserved
-                    ? "Esta propiedad está reservada y no admite acceso al dossier."
-                    : "Dossier no disponible para este estado."}
+                  : "Dossier no disponible para este estado."}
               </span>
             </>
           ) : (

@@ -18,7 +18,11 @@ export default async function ClientDetailPage({
 
   const [{ data: client, error: cErr }, { data: props }, { data: linksRaw }] = await Promise.all([
     db.from("clients").select("*").eq("id", params.id).single(),
-    db.from("properties").select("id,title").eq("status", "available").order("title", { ascending: true }),
+    db
+      .from("properties")
+      .select("id,title")
+      .in("status", ["urgent", "available", "searching"])
+      .order("title", { ascending: true }),
     db.from("client_links").select("*").eq("client_id", params.id).order("created_at", { ascending: false }),
   ]);
 

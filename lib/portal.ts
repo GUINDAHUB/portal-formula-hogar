@@ -114,26 +114,36 @@ async function resolveClientNameForPortal(
   }
 }
 
-/** Mismo criterio que la RPC: disponibles primero, luego reservadas, luego no disponibles; recientes antes. */
+/** Mismo criterio que la RPC: urgentes > disponibles > en búsqueda > no disponibles. */
 function sortCatalogProperties(rows: PropertyRow[]): PropertyRow[] {
-  const rank = (s: PropertyRow["status"]) =>
-    s === "available" ? 0 : s === "reserved" ? 1 : 2;
+  const rank = (s: PropertyRow["status"]) => {
+    if (s === "urgent") return 0;
+    if (s === "available") return 1;
+    if (s === "searching") return 2;
+    return 3;
+  };
   return [...rows].sort((a, b) => {
     const d = rank(a.status) - rank(b.status);
     if (d !== 0) return d;
+    const aYield = Number(a.yield_percent);
+    const bYield = Number(b.yield_percent);
+    const aHasYield = Number.isFinite(aYield);
+    const bHasYield = Number.isFinite(bYield);
+    if (aHasYield && bHasYield && aYield !== bYield) return bYield - aYield;
+    if (aHasYield !== bHasYield) return aHasYield ? -1 : 1;
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
 }
 
 /**
- * La RPC puede no incluir reservadas/no disponibles si RLS filtra subconsultas en Supabase.
+ * La RPC puede no incluir no disponibles si RLS filtra subconsultas en Supabase.
  * En el servidor completamos el catálogo global con service_role (sin exponer la clave al cliente).
  */
-async function mergeWithGlobalReservedAndUnavailable(fromRpc: PropertyRow[]): Promise<PropertyRow[]> {
+async function mergeWithGlobalUnavailable(fromRpc: PropertyRow[]): Promise<PropertyRow[]> {
   if (!hasServiceRoleConfig()) {
     if (isDev()) {
       console.warn(
-        "[portal] SUPABASE_SERVICE_ROLE_KEY no configurada: el catálogo puede no mostrar reservadas/no disponibles si la RPC no las devuelve.",
+        "[portal] SUPABASE_SERVICE_ROLE_KEY no configurada: el catálogo puede no mostrar no disponibles si la RPC no las devuelve.",
       );
     }
     return sortCatalogProperties(fromRpc);
@@ -144,7 +154,7 @@ async function mergeWithGlobalReservedAndUnavailable(fromRpc: PropertyRow[]): Pr
     const { data, error } = await db
       .from("properties")
       .select(PROPERTY_COLUMNS)
-      .in("status", ["reserved", "unavailable"]);
+      .eq("status", "unavailable");
 
     if (error) {
       if (isDev()) console.error("[portal] merge catálogo global:", error.message);
@@ -212,7 +222,7 @@ export async function fetchPortalAccess(code: string): Promise<PortalAccessFetch
 
   if (status === "ok") {
     const fromRpc = asPropertyRows(o.properties);
-    const properties = await mergeWithGlobalReservedAndUnavailable(fromRpc);
+    const properties = await mergeWithGlobalUnavailable(fromRpc);
     const clientName = await resolveClientNameForPortal(o, code);
     return {
       error: null,

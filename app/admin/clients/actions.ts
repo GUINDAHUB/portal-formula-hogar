@@ -62,11 +62,11 @@ export async function createClientLink(input: {
     .from("properties")
     .select("id")
     .in("id", propertyIds)
-    .eq("status", "available");
+    .in("status", ["urgent", "available", "searching"]);
   if (availErr) return { error: availErr.message };
   const okIds = new Set((availableRows ?? []).map((r) => r.id as string));
   if (okIds.size !== propertyIds.length) {
-    return { error: "Solo se pueden incluir propiedades en estado disponible" };
+    return { error: "Solo se pueden incluir propiedades en estado urgente, disponible o en búsqueda" };
   }
 
   const expiresAt = new Date(Date.now() + durationHours * 60 * 60 * 1000).toISOString();

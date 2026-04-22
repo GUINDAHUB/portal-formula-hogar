@@ -10,7 +10,10 @@ export function Logo({
   className?: string;
 }) {
   const isDarkBg = variant === "dark";
-  const src = isDarkBg ? "/brand/logo-negative.png" : "/brand/logo-color.png";
+  const src = isDarkBg
+    ? "/brand/logo-negative-header.png"
+    : "/brand/logo-color-header.png";
+  const renderedWidthPx = 176;
 
   return (
     <div className={`flex items-center ${className}`}>
@@ -20,6 +23,7 @@ export function Logo({
         width={880}
         height={220}
         priority
+        sizes={`${renderedWidthPx}px`}
         className="h-11 w-auto"
       />
     </div>

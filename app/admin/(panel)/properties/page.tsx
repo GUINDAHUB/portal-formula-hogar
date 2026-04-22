@@ -28,8 +28,10 @@ export default async function AdminPropertiesPage() {
   }
 
   const rows = (data ?? []) as PropertyRow[];
-  const available = rows.filter((p) => p.status === "available");
-  const other = rows.filter((p) => p.status !== "available");
+  const assignable = rows.filter((p) =>
+    p.status === "urgent" || p.status === "available" || p.status === "searching",
+  );
+  const unavailable = rows.filter((p) => p.status === "unavailable");
 
   return (
     <div className="space-y-8">
@@ -37,8 +39,8 @@ export default async function AdminPropertiesPage() {
         <div>
           <h1 className="font-display text-3xl font-bold text-near-black">Propiedades</h1>
           <p className="mt-1 font-body text-gray-600">
-            Gestiona el catálogo. Solo las disponibles se pueden asignar al crear enlaces; reservadas y no disponibles
-            se muestran en el portal para todos los clientes.
+            Gestiona el catálogo. Las urgentes, disponibles y en búsqueda se pueden asignar al crear enlaces; las no
+            disponibles se muestran en el portal para todos los clientes.
           </p>
         </div>
         <Link href="/admin/properties/new">
@@ -56,18 +58,18 @@ export default async function AdminPropertiesPage() {
         <div className="space-y-10">
           <section className="space-y-4">
             <div>
-              <h2 className="font-display text-xl font-bold text-near-black">Disponibles</h2>
+              <h2 className="font-display text-xl font-bold text-near-black">Urgentes, disponibles y en búsqueda</h2>
               <p className="mt-1 font-body text-sm text-gray-600">
                 Aparecen en los enlaces cuando las seleccionas al generar el acceso.
               </p>
             </div>
-            {available.length === 0 ? (
+            {assignable.length === 0 ? (
               <p className="surface-card p-6 font-body text-sm text-gray-600">
-                No hay propiedades disponibles.
+                No hay propiedades en estados asignables.
               </p>
             ) : (
               <div className="grid gap-6">
-                {available.map((p) => (
+                {assignable.map((p) => (
                   <PropertyCardAdmin key={p.id} property={p} />
                 ))}
               </div>
@@ -76,18 +78,18 @@ export default async function AdminPropertiesPage() {
 
           <section className="space-y-4">
             <div>
-              <h2 className="font-display text-xl font-bold text-near-black">Reservadas y no disponibles</h2>
+              <h2 className="font-display text-xl font-bold text-near-black">No disponibles</h2>
               <p className="mt-1 font-body text-sm text-gray-600">
                 Visibles en el portal para todos los enlaces (no hace falta asignarlas por cliente).
               </p>
             </div>
-            {other.length === 0 ? (
+            {unavailable.length === 0 ? (
               <p className="surface-card p-6 font-body text-sm text-gray-600">
-                No hay propiedades en estos estados.
+                No hay propiedades no disponibles.
               </p>
             ) : (
               <div className="grid gap-6">
-                {other.map((p) => (
+                {unavailable.map((p) => (
                   <PropertyCardAdmin key={p.id} property={p} />
                 ))}
               </div>

@@ -101,7 +101,8 @@ export function LinkGenerator({
         <h2 className="font-display text-xl font-bold text-near-black">Links de acceso</h2>
         <p className="mt-1 font-body text-sm text-gray-600">
           Genera enlaces con código de 6 caracteres. Solo puedes marcar propiedades{" "}
-          <span className="font-semibold text-near-black">disponibles</span>; las reservadas y no disponibles del
+          <span className="font-semibold text-near-black">urgentes, disponibles o en búsqueda</span>; las no
+          disponibles del
           catálogo se muestran automáticamente en el portal para todos los enlaces.
         </p>
       </div>
@@ -163,7 +164,9 @@ export function LinkGenerator({
       </div>
 
       <div className="space-y-2">
-        <p className="font-body text-sm font-semibold text-near-black">Propiedades disponibles a incluir</p>
+        <p className="font-body text-sm font-semibold text-near-black">
+          Propiedades urgentes/disponibles/en búsqueda a incluir
+        </p>
         {properties.length === 0 ? (
           <p className="font-body text-sm text-gray-600">No hay propiedades en el sistema todavía.</p>
         ) : (

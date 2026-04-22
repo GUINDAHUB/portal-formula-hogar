@@ -2,13 +2,15 @@ import type { PropertyStatus } from "@/lib/types";
 
 const labels: Record<PropertyStatus, string> = {
   available: "Disponible",
-  reserved: "Reservado",
+  urgent: "Urgente",
+  searching: "En búsqueda de inmueble",
   unavailable: "No disponible",
 };
 
 const styles: Record<PropertyStatus, string> = {
   available: "bg-brand text-near-black",
-  reserved: "bg-amber-900/85 text-amber-100",
+  urgent: "bg-red-700/90 text-red-50",
+  searching: "bg-amber-900/85 text-amber-100",
   unavailable: "bg-near-black/85 text-gray-100",
 };
 

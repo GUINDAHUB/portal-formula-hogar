@@ -104,7 +104,8 @@ export function PropertyForm({ property }: { property?: PropertyRow | null }) {
             className="admin-input"
           >
             <option value="available">Disponible</option>
-            <option value="reserved">Reservado</option>
+            <option value="urgent">Urgente</option>
+            <option value="searching">En búsqueda de inmueble</option>
             <option value="unavailable">No disponible</option>
           </select>
         </div>

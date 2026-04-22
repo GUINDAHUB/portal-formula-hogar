@@ -1,4 +1,4 @@
-export type PropertyStatus = "available" | "reserved" | "unavailable";
+export type PropertyStatus = "available" | "urgent" | "searching" | "unavailable";
 
 export type PropertyRow = {
   id: string;

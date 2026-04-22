@@ -5,6 +5,13 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { PropertyStatus } from "@/lib/types";
 
+function mapPropertySaveError(message: string): string {
+  if (message.includes("properties_status_check")) {
+    return "La base de datos aún no está actualizada con los nuevos estados. Aplica la migración 20260422000000_property_statuses_priority.sql en Supabase y vuelve a intentarlo.";
+  }
+  return message;
+}
+
 function num(formData: FormData, key: string): number | null {
   const v = formData.get(key);
   if (v === null || v === "") return null;
@@ -94,14 +101,14 @@ export async function saveProperty(_prev: unknown, formData: FormData) {
       .from("properties")
       .update({ ...row, image_url, pdf_url })
       .eq("id", id);
-    if (error) return { error: error.message };
+    if (error) return { error: mapPropertySaveError(error.message) };
   } else {
     const { data: inserted, error: insErr } = await db
       .from("properties")
       .insert(row)
       .select("id")
       .single();
-    if (insErr) return { error: insErr.message };
+    if (insErr) return { error: mapPropertySaveError(insErr.message) };
     const newId = inserted!.id as string;
 
     let image_url: string | null = null;
@@ -132,7 +139,7 @@ export async function saveProperty(_prev: unknown, formData: FormData) {
         .from("properties")
         .update({ image_url, pdf_url })
         .eq("id", newId);
-      if (error) return { error: error.message };
+      if (error) return { error: mapPropertySaveError(error.message) };
     }
   }
 

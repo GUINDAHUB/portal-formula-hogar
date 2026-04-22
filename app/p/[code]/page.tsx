@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
-import { PropertyCatalogCard } from "@/components/portal/PropertyCatalogCard";
+import { PropertyCatalogList } from "@/components/portal/PropertyCatalogList";
 import { fetchPortalAccess } from "@/lib/portal";
 
 function errorMessage(code: string | null) {
@@ -48,39 +48,40 @@ export default async function PortalCatalogPage({
 
   return (
     <div className="app-shell">
-      <header className="border-b border-white/70 bg-white/70 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <Logo variant="light" />
-          {clientName ? (
-            <p className="font-body text-sm text-gray-600 sm:text-right">
-              <span className="font-display text-base font-bold text-near-black sm:text-lg">
-                Bienvenido/a, {clientName}
-              </span>
-            </p>
-          ) : (
-            <p className="font-display text-base font-semibold text-near-black sm:text-lg">Bienvenido/a</p>
-          )}
+      <header className="px-4 pt-5 sm:pt-6">
+        <div className="mx-auto max-w-6xl border-b border-[#dfe5d2] pb-4 sm:pb-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-center justify-center sm:justify-start">
+              <Logo variant="light" />
+            </div>
+
+            <div className="h-px w-full bg-[#e4e9d9] lg:h-10 lg:w-px lg:bg-[#dbe2cc]" aria-hidden />
+
+            <div className="text-center sm:text-left lg:text-right">
+              <p className="font-body text-xs font-semibold uppercase tracking-[0.08em] text-gray-600">
+                Portal privado
+              </p>
+              {clientName ? (
+                <p className="mt-1 font-display text-lg font-bold leading-tight text-near-black sm:text-xl">
+                  Bienvenido/a, {clientName}
+                </p>
+              ) : (
+                <p className="mt-1 font-display text-lg font-semibold leading-tight text-near-black sm:text-xl">
+                  Bienvenido/a
+                </p>
+              )}
+            </div>
+          </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-10">
-        <section className="hero-surface mb-8 p-6 sm:p-8">
-          <p className="font-display text-2xl text-near-black sm:text-3xl">Oportunidades seleccionadas para ti</p>
-          <p className="mt-2 max-w-3xl font-body text-sm text-gray-600 sm:text-base">
-            Aquí tienes tu selección actual de activos. Mantén este acceso privado y revisa cada dossier para conocer
-            detalles, rentabilidad y estructura de inversión.
-          </p>
-        </section>
         {properties.length === 0 ? (
           <p className="surface-card p-8 text-center font-body text-gray-600">
             No hay propiedades asignadas a este enlace.
           </p>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {properties.map((p, idx) => (
-              <PropertyCatalogCard key={p.id} property={p} imagePriority={idx === 0} />
-            ))}
-          </div>
+          <PropertyCatalogList properties={properties} />
         )}
       </main>
     </div>
