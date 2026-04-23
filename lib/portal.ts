@@ -1,6 +1,7 @@
 import { createPortalAnonClient } from "@/lib/supabase/portal-anon";
 import { createServiceRoleClient, hasServiceRoleConfig } from "@/lib/supabase/service-role";
 import type { PortalAccessFetchResult, PortalAccessResult, PropertyRow } from "@/lib/types";
+import { unstable_noStore as noStore } from "next/cache";
 
 /** Nombre de la RPC en Postgres (tu proyecto usa esta; la migración del repo llamaba `portal_access`). */
 const PORTAL_RPC = "get_portal_by_code";
@@ -177,6 +178,7 @@ async function mergeWithGlobalUnavailable(fromRpc: PropertyRow[]): Promise<Prope
 }
 
 export async function fetchPortalAccess(code: string): Promise<PortalAccessFetchResult> {
+  noStore();
   const supabase = createPortalAnonClient();
   const { data, error: rpcError } = await supabase.rpc(PORTAL_RPC, {
     p_code: code,

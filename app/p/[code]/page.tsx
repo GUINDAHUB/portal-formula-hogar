@@ -3,6 +3,8 @@ import { Logo } from "@/components/ui/Logo";
 import { PropertyCatalogList } from "@/components/portal/PropertyCatalogList";
 import { fetchPortalAccess } from "@/lib/portal";
 
+export const dynamic = "force-dynamic";
+
 function errorMessage(code: string | null) {
   if (code === "expired") return "Este enlace ha caducado.";
   if (code === "inactive") return "Este enlace está desactivado.";
